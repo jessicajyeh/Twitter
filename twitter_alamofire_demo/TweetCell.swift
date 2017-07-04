@@ -15,6 +15,9 @@ class TweetCell: UITableViewCell {
     @IBOutlet weak var profileView: UIImageView!
     @IBOutlet weak var authorTextLabel: UILabel!
     @IBOutlet weak var displayNametextLabel: UILabel!
+    @IBOutlet weak var replyNum: UILabel!
+    @IBOutlet weak var retweetNum: UILabel!
+    @IBOutlet weak var heartNum: UILabel!
     
     var tweet: Tweet! {
         didSet {
@@ -24,7 +27,24 @@ class TweetCell: UITableViewCell {
             if let imgURL = tweet.user.imgURL {
                 profileView.af_setImage(withURL: imgURL)
             }
+            
+            let rtNum = tweet.retweetCount 
+            let favNum = tweet.favoriteCount!
+            retweetNum.text = String(rtNum)
+            heartNum.text = String(favNum)
         }
+    }
+    
+    @IBAction func onRT(_ sender: Any) {
+        tweet.retweetCount += 1
+        let rtNum = tweet.retweetCount
+        retweetNum.text = String(rtNum)
+    }
+    
+    @IBAction func onHeart(_ sender: Any) {
+        tweet.favoriteCount! += 1
+        let favNum = tweet.favoriteCount
+        heartNum.text = String(describing: favNum)
     }
     
     override func awakeFromNib() {
