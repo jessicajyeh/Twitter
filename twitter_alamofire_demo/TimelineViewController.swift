@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TimelineViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, ComposeViewControllerDelegate {
+class TimelineViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, ComposeViewControllerDelegate, RetweetUpdateDelegate {
     
     var tweets: [Tweet] = []
     
@@ -38,6 +38,7 @@ class TimelineViewController: UIViewController, UITableViewDelegate, UITableView
         let cell = tableView.dequeueReusableCell(withIdentifier: "TweetCell", for: indexPath) as! TweetCell
         
         cell.tweet = tweets[indexPath.row]
+        cell.delegate = self //for passing retweets
         
         return cell
     }
@@ -76,9 +77,15 @@ class TimelineViewController: UIViewController, UITableViewDelegate, UITableView
 
     }
     
+    func didRetweet(post: Tweet) {
+        tweets.append(post)
+        self.tableView.reloadData()
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let composeVC = segue.destination as! ComposeViewController
-        composeVC.delegate = self
+        if let composeVC = segue.destination as? ComposeViewController {
+            composeVC.delegate = self
+        }
     }
     
     override func didReceiveMemoryWarning() {

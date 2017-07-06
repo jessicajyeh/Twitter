@@ -9,6 +9,10 @@
 import UIKit
 import AlamofireImage
 
+protocol RetweetUpdateDelegate: class{
+    func didRetweet(post: Tweet)
+}
+
 class TweetCell: UITableViewCell {
     
     @IBOutlet weak var tweetTextLabel: UILabel!
@@ -21,6 +25,7 @@ class TweetCell: UITableViewCell {
     @IBOutlet weak var rtButton: UIButton!
     @IBOutlet weak var favButton: UIButton!
     @IBOutlet weak var timeLabel: UILabel!
+    weak var delegate: RetweetUpdateDelegate?
     
     var tweet: Tweet! {
         didSet {
@@ -38,6 +43,9 @@ class TweetCell: UITableViewCell {
                     print("Error retweeting tweet: \(error.localizedDescription)")
                 } else if let tweet = tweet {
                     print("Successfully retweeted the following Tweet: \n\(tweet.text)")
+                    if let del = self.delegate {
+                        del.didRetweet(post: tweet)
+                    }
                 }
             }
         } else {
