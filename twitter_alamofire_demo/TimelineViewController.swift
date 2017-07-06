@@ -85,8 +85,14 @@ class TimelineViewController: UIViewController, UITableViewDelegate, UITableView
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let composeVC = segue.destination as? ComposeViewController {
             composeVC.delegate = self
+        } else if let detailVC = segue.destination as? DetailViewController {
+            let cell = sender as! TweetCell
+            let indexPath = tableView.indexPath(for: cell)
+            detailVC.tweet = tweets[(indexPath?.row)!]
         }
     }
+    
+    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
