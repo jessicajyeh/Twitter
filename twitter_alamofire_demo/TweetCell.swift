@@ -33,10 +33,25 @@ class TweetCell: UITableViewCell {
             tweet.retweetCount += 1
             tweet.retweeted = true
             rtButton.setImage(#imageLiteral(resourceName: "retweet-icon-green"), for: .normal)
+            APIManager.shared.retweet(tweet) { (tweet: Tweet?, error: Error?) in
+                if let  error = error {
+                    print("Error retweeting tweet: \(error.localizedDescription)")
+                } else if let tweet = tweet {
+                    print("Successfully retweeted the following Tweet: \n\(tweet.text)")
+                }
+            }
         } else {
             tweet.retweetCount -= 1
             tweet.retweeted = false
             rtButton.setImage(#imageLiteral(resourceName: "retweet-icon"), for: .normal)
+            APIManager.shared.unretweet(tweet) { (tweet: Tweet?, error: Error?) in
+                if let  error = error {
+                    print("Error unretweeting tweet: \(error.localizedDescription)")
+                } else if let tweet = tweet {
+                    print("Successfully unretweeted the following Tweet: \n\(tweet.text)")
+                }
+            }
+
         }
         let rtNum = tweet.retweetCount
         retweetNum.text = String(rtNum)
