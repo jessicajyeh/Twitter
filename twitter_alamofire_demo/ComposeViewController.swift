@@ -12,15 +12,18 @@ protocol ComposeViewControllerDelegate: class {
     func did(post: Tweet)
 }
 
-class ComposeViewController: UIViewController {
+class ComposeViewController: UIViewController, UITextViewDelegate {
     
     @IBOutlet weak var profileView: UIImageView!
     weak var delegate: ComposeViewControllerDelegate?
 
     @IBOutlet weak var tweetContent: UITextView!
+    @IBOutlet weak var charCount: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        tweetContent.delegate = self
 
         //setting profile picture
         if let imgURL = User.current?.imgURL {
@@ -45,6 +48,11 @@ class ComposeViewController: UIViewController {
         dismiss(animated: true)
     }
 
+    func textViewDidChange(_ textView: UITextView) {
+        let charsLeft = 140 - tweetContent.text.characters.count
+        charCount.text = String(charsLeft)
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

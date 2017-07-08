@@ -19,6 +19,7 @@ class Tweet {
     var retweeted: Bool // Configure retweet button
     var user: User // Contains name, screenname, etc. of tweet author
     var createdAtString: String // Display date
+    var imageURL: URL?
     
     // MARK: - Create initializer with dictionary
     init(dictionary: [String: Any]) {
@@ -43,6 +44,15 @@ class Tweet {
         formatter.timeStyle = .none
         // Convert Date to String
         createdAtString = formatter.string(from: date)
+        
+        //geting images
+        if let entity = dictionary["entities"] as? [String: Any] {
+            if let media = entity["media"] as? [[String: Any]] {
+                if let stringURL = media[0]["media_url_https"] as? String {
+                    imageURL = URL(string: stringURL)
+                }
+            }
+        }
         
     }
     

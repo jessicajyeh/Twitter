@@ -146,7 +146,6 @@ class APIManager: SessionManager {
     }
 
     
-    // MARK: TODO: Retweet
     func retweet(_ tweet: Tweet, completion: @escaping (Tweet?, Error?) -> ()) {
         let urlString = "https://api.twitter.com/1.1/statuses/retweet/" + String(tweet.id) + ".json"
         let parameters = ["id": tweet.id]
@@ -162,7 +161,6 @@ class APIManager: SessionManager {
     }
 
     
-    // MARK: TODO: Un-Retweet
     func unretweet(_ tweet: Tweet, completion: @escaping (Tweet?, Error?) -> ()) {
         let urlString = "https://api.twitter.com/1.1/statuses/unretweet/" + String(tweet.id) + ".json"
         let parameters = ["id": tweet.id]
@@ -178,8 +176,6 @@ class APIManager: SessionManager {
     }
 
     
-    // MARK: TODO: Compose Tweet
-    
     func composeTweet(with text: String, completion: @escaping (Tweet?, Error?) -> ()) {
         let urlString = "https://api.twitter.com/1.1/statuses/update.json"
         let parameters = ["status": text]
@@ -192,7 +188,29 @@ class APIManager: SessionManager {
         }
     }
     
-    // MARK: TODO: Get User Timeline
+    func getUserTimeline(_ screenName: String, completion: @escaping ([Tweet]?, Error?) -> ()) {
+        request(URL(string: "https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=" + screenName)!, method: .get)
+            .validate()
+            .responseJSON { (response) in
+                guard response.result.isSuccess else {
+                    completion(nil, response.result.error)
+                    return
+                }
+                guard let tweetDictionaries = response.result.value as? [[String: Any]] else {
+                    print("Failed to parse tweets")
+                    let error = NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey : "Failed to parse tweets"])
+                    completion(nil, error)
+                    return
+                }
+
+                let tweets = tweetDictionaries.flatMap({ (dictionary) -> Tweet in
+                    Tweet(dictionary: dictionary)
+                })
+                completion(tweets, nil)
+        }
+    }
+
+
     
     
     //--------------------------------------------------------------------------------//

@@ -13,6 +13,10 @@ protocol RetweetUpdateDelegate: class{
     func didRetweet(post: Tweet)
 }
 
+protocol TweetCellDelegate: class {
+    func tweetCell(_ tweetCell: TweetCell, didTap user: User)
+}
+
 class TweetCell: UITableViewCell {
     
     @IBOutlet weak var tweetTextLabel: UILabel!
@@ -25,7 +29,9 @@ class TweetCell: UITableViewCell {
     @IBOutlet weak var rtButton: UIButton!
     @IBOutlet weak var favButton: UIButton!
     @IBOutlet weak var timeLabel: UILabel!
+    @IBOutlet weak var mediaView: UIImageView!
     weak var delegate: RetweetUpdateDelegate?
+    weak var tweetDelegate: TweetCellDelegate?
     
     var tweet: Tweet! {
         didSet {
@@ -35,6 +41,8 @@ class TweetCell: UITableViewCell {
             
             //setting created at time
             timeLabel.text = tweet.createdAtString
+            //let date = Date(tweet.createdAtString)
+            //timeLabel.text = date.shortTimeAgoSinceNow
             
             //setting profile images
             if let imgURL = tweet.user.imgURL {
@@ -58,6 +66,13 @@ class TweetCell: UITableViewCell {
             let favNum = tweet.favoriteCount!
             retweetNum.text = String(rtNum)
             heartNum.text = String(favNum)
+            
+            //setting media
+            if let imgURL = tweet.imageURL {
+                mediaView.af_setImage(withURL: imgURL)
+                print(imgURL)
+            }
+
         }
     }
     
@@ -126,8 +141,15 @@ class TweetCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        let profileTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.didTapUserProfile(_:)))
+        profileView.addGestureRecognizer(profileTapGestureRecognizer)
+        profileView.isUserInteractionEnabled = true
     }
+    
+    func didTapUserProfile(_ sender: UITapGestureRecognizer) {
+        tweetDelegate?.tweetCell(self, didTap: tweet.user)
+    }
+    
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
